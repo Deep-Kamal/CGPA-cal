@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #cgpaResult {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CGPA Calculator</h1>
+    
+    <form id="cgpaForm">
+        <label for="totalCourses">Enter total number of courses:</label>
+        <input type="number" id="totalCourses" name="totalCourses" min="1" required>
+        <div id="courseInputs">
+            <!-- Course name and grade inputs will be dynamically generated here -->
+        </div>
+        <button type="button" onclick="generateInputs()">Generate Course Inputs</button>
+        <button type="button" onclick="calculateCGPA()">Calculate CGPA</button>
+    </form>
+
+    <p id="cgpaResult"></p>
+
+    <script>
+        function generateInputs() {
+            const totalCourses = parseInt(document.getElementById('totalCourses').value);
+            const courseInputsDiv = document.getElementById('courseInputs');
+            courseInputsDiv.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 1; i <= totalCourses; i++) {
+                const courseLabel = document.createElement('label');
+                courseLabel.textContent = `Course ${i} Grade (0-4):`;
+                const gradeInput = document.createElement('input');
+                gradeInput.type = 'number';
+                gradeInput.step = '0.01';
+                gradeInput.min = '0';
+                gradeInput.max = '4';
+                gradeInput.name = `grade${i}`;
+                gradeInput.required = true;
+
+                const inputGroup = document.createElement('div');
+                inputGroup.classList.add('input-group');
+                inputGroup.appendChild(courseLabel);
+                inputGroup.appendChild(gradeInput);
+                courseInputsDiv.appendChild(inputGroup);
+            }
+        }
+
+        function calculateCGPA() {
+            const totalCourses = parseInt(document.getElementById('totalCourses').value);
+            let totalCredits = 0;
+            let totalWeightedGradePoints = 0;
+
+            for (let i = 1; i <= totalCourses; i++) {
+                const grade = parseFloat(document.getElementsByName(`grade${i}`)[0].value);
+                if (!isNaN(grade)) {
+                    // Assuming each course has 3 credits (adjust as per your institution's credit system)
+                    const credits = 3;
+                    totalCredits += credits;
+                    totalWeightedGradePoints += (grade * credits);
+                }
+            }
+
+            if (totalCredits > 0) {
+                const cgpa = totalWeightedGradePoints / totalCredits;
+                document.getElementById('cgpaResult').textContent = `Your CGPA is: ${cgpa.toFixed(2)}`;
+            } else {
+                document.getElementById('cgpaResult').textContent = 'Please enter valid grades.';
+            }
+        }
+    </script>
+</body>
+</html>
